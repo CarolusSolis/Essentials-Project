@@ -5,6 +5,7 @@ public class PlayerController : MonoBehaviour
 {
     public float speed = 5.0f; // Set player's movement speed.
     public float rotationSpeed = 120.0f; // Set player's rotation speed.
+    public float verticalSpeed = 3.0f; // Set player's vertical movement speed.
 
     private Rigidbody rb; // Reference to player's Rigidbody.
 
@@ -20,13 +21,17 @@ public class PlayerController : MonoBehaviour
         
     }
 
-
     // Handle physics-based movement and rotation.
     private void FixedUpdate()
     {
         // Move player based on vertical input.
         float moveVertical = Input.GetAxis("Vertical");
         Vector3 movement = transform.forward * moveVertical * speed * Time.fixedDeltaTime;
+
+        // Add vertical movement using VerticalFlight axis
+        float verticalMovement = Input.GetAxis("VerticalFlight") * verticalSpeed;
+        movement += Vector3.up * verticalMovement * Time.fixedDeltaTime;
+        
         rb.MovePosition(rb.position + movement);
 
         // Rotate player based on horizontal input.
