@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
     public float speed = 5.0f; // Set player's movement speed.
     public float rotationSpeed = 120.0f; // Set player's rotation speed.
     public float verticalSpeed = 3.0f; // Set player's vertical movement speed.
+    public float stabilizationSpeed = 5.0f; // Speed at which the UFO stabilizes
 
     private Rigidbody rb; // Reference to player's Rigidbody.
 
@@ -31,6 +32,15 @@ public class PlayerController : MonoBehaviour
         // Add vertical movement using VerticalFlight axis
         float verticalMovement = Input.GetAxis("VerticalFlight") * verticalSpeed;
         movement += Vector3.up * verticalMovement * Time.fixedDeltaTime;
+
+        // Always stabilize
+        // Gradually reduce velocity
+        rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, Vector3.zero, stabilizationSpeed * Time.fixedDeltaTime);
+        rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, stabilizationSpeed * Time.fixedDeltaTime);
+        
+        // Level out rotation
+        Quaternion targetRotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
+        rb.MoveRotation(Quaternion.Lerp(rb.rotation, targetRotation, stabilizationSpeed * Time.fixedDeltaTime));
         
         rb.MovePosition(rb.position + movement);
 
